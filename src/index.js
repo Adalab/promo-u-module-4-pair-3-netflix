@@ -27,7 +27,7 @@ server.get('/movies', async (req, res) => {
   const conn = await getConnection();
   const queryMovies = ' SELECT * FROM movies';
   const [results] = await conn.query(queryMovies);
-  //conn.end();
+  conn.end();
   res.json({
     success: true,
     movies:  results
