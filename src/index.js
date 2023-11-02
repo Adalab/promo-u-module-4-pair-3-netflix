@@ -25,8 +25,8 @@ const movies = [
 // Ruta para obtener la lista de películas
 server.get('/movies', async (req, res) => {
   const conn = await getConnection();
-  const queryMovies = ' SELECT * FROM movies';
-  const [results] = await conn.query(queryMovies);
+  const queryMovies = ' SELECT * FROM Movies';
+  const [results, fields] = await conn.query(queryMovies);
   conn.end();
   res.json({
     success: true,
@@ -39,8 +39,8 @@ async function getConnection() {
   const connection = await mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'naiara-2019',
-    database: 'netflix',
+    password: '3993yasmin',
+    database: 'Netflix',
   });
   connection.connect();
 return connection;
