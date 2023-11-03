@@ -25,7 +25,15 @@ const movies = [
 // Ruta para obtener la lista de películas
 server.get('/movies', async (req, res) => {
   const conn = await getConnection();
-  const queryMovies = ' SELECT * FROM Movies';
+  const orderBy = req.query.orderBy || 'asc'; 
+  let queryMovies = `SELECT * FROM Movies ORDER BY title ${orderBy.toUpperCase()}`;
+ 
+  if(req.query.genre){
+    const genreFilterParam  = req.query.genre;
+    queryMovies = `SELECT * FROM Movies WHERE genre = '${genreFilterParam }'`;
+  }
+
+
   const [results, fields] = await conn.query(queryMovies);
   conn.end();
   res.json({
@@ -34,6 +42,7 @@ server.get('/movies', async (req, res) => {
   });
   
 });
+
 async function getConnection() {
   //crear y configurar la conexión.
   const connection = await mysql.createConnection({
@@ -50,6 +59,8 @@ const serverPort = 4000;
 server.listen(serverPort, () => {
   console.log(`Server listening at http://localhost:${serverPort}`);
 });
+//endpoint
+
 
 
 /*
