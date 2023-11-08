@@ -1,9 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2/promise');
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 const server = express();
 server.use(cors());
@@ -15,15 +14,15 @@ async function getConnection() {
   const connection = await mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '3993yasmin',
+    password: 'naiara-2019',
     database: 'Netflix',
   });
-  connection.connect ();
+  connection.connect();
   return connection;
 }
 
 const generateToken = (payload) => {
-  const token = jwt.sign(payload, "secreto", { expiresIn: "12h" });
+  const token = jwt.sign(payload, 'secreto', { expiresIn: '12h' });
   return token;
 };
 const serverPort = 4000;
@@ -36,17 +35,17 @@ const movies = [
     id: '1',
     title: 'Gambito de dama',
     genre: 'Drama',
-    image: '//beta.adalab.es/curso-intensivo-fullstack-recursos/apis/netflix-v1/images/gambito-de-dama.jpg'
+    image:
+      '//beta.adalab.es/curso-intensivo-fullstack-recursos/apis/netflix-v1/images/gambito-de-dama.jpg',
   },
   {
     id: '2',
     title: 'Friends',
     genre: 'Comedia',
-    image: '//beta.adalab.es/curso-intensivo-fullstack-recursos/apis/netflix-v1/images/friends.jpg'
-  }
+    image:
+      '//beta.adalab.es/curso-intensivo-fullstack-recursos/apis/netflix-v1/images/friends.jpg',
+  },
 ];
-
-
 
 server.get('/movies', async (req, res) => {
   const conn = await getConnection();
@@ -73,13 +72,47 @@ server.get('/movies', async (req, res) => {
     });
   }
 });
+server.get('/movie/:userId', async (req, res) => {
+  const userId = req.params.idUser;
+
+  try {
+    const conn = await getConnection();
+    const [results, fields] = await conn.query(
+      'SELECT * FROM Movies WHERE idUser = ?',
+      [userId]
+    );
+    conn.end();
+
+    if (results.length > 0) {
+      const foundUser = results[0];
+      console.log('Found User:', foundUser);
+
+      res.render('user', foundUser);
+      
+    } else {
+      res.json({
+        success: true,
+        userId: 'id_de_la_usuaria_encontrada',
+      });
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+});
 
 server.get('/movie/:movieId', async (req, res) => {
   const movieId = req.params.movieId;
 
   try {
     const conn = await getConnection();
-    const [results, fields] = await conn.query('SELECT * FROM Movies WHERE idMovies = ?', [movieId]);
+    const [results, fields] = await conn.query(
+      'SELECT * FROM Movies WHERE idMovies = ?',
+      [movieId]
+    );
     conn.end();
 
     if (results.length > 0) {
@@ -100,7 +133,7 @@ server.get('/movie/:movieId', async (req, res) => {
       message: 'Internal Server Error',
     });
   }
-
+});
 //Proceso de login
 //usuario y la contraseña
 server.post('/sign-up', async (req, res) => {
@@ -121,7 +154,10 @@ server.post('/sign-up', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Crea la nueva entrada en la base de datos
-    const [result] = await conn.query('INSERT INTO users (email, hashed_password) VALUES (?, ?)', [email, hashedPassword]);
+    const [result] = await conn.query(
+      'INSERT INTO users (email, password) VALUES (?, ?)',
+      [email, hashedPassword]
+    );
     conn.end();
 
     const newUserId = result.insertId;
@@ -145,9 +181,5 @@ server.post('/sign-up', async (req, res) => {
 
 //servidor de estáticos
 //servidor de estáticos
-const pathServerStatic = "./public_html";
+const pathServerStatic = './public_html';
 server.use(express.static(pathServerStatic));
-
-
-});
-
