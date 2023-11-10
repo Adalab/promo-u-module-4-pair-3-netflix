@@ -14,7 +14,7 @@ async function getConnection() {
   const connection = await mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'naiara-2019',
+    password: '3993yasmin',
     database: 'Netflix',
   });
   connection.connect();
@@ -92,7 +92,7 @@ server.get('/movie/:userId', async (req, res) => {
     } else {
       res.json({
         success: true,
-        userId: 'id_de_la_usuaria_encontrada',
+        userId: 'idUser',
       });
     }
   } catch (error) {
@@ -136,7 +136,7 @@ server.get('/movie/:movieId', async (req, res) => {
 });
 //Proceso de login
 //usuario y la contraseña
-server.post('/sign-up', async (req, res) => {
+server.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   // Verifica si el email y la contraseña fueron proporcionados
@@ -155,7 +155,7 @@ server.post('/sign-up', async (req, res) => {
 
     // Crea la nueva entrada en la base de datos
     const [result] = await conn.query(
-      'INSERT INTO users (email, password) VALUES (?, ?)',
+      'INSERT INTO Users (email, password) VALUES (?, ?)',
       [email, hashedPassword]
     );
     conn.end();

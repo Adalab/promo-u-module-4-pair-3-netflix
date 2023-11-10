@@ -2,7 +2,7 @@
 
 const sendLoginToApi = (data) => {
   console.log('Se están enviando datos al login:', data);
-  // CAMBIA ESTE FETCH PARA QUE APUNTE A UN ENDPOINT DE TU SERVIDOR, PIENSA SI DEBE SER GET O POST, PIENSA QUÉ DATOS DEBES ENVIAR, ETC
+
   return fetch('http://localhost:4000/login', {
     method: 'POST',
     headers: {
@@ -10,11 +10,28 @@ const sendLoginToApi = (data) => {
     },
     body: JSON.stringify(data),
   })
-    .then((response) => response.json())
-    .then(() => {
-      return data;
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      return {
+        success: true,
+        userId: "idUser"
+      };
+    })
+    .catch((error) => {
+      console.error('Error al enviar datos al servidor:', error);
+      // Handle non-JSON response or other errors here
+      return {
+        success: false,
+        error: error.message
+      };
     });
 };
+
 
 // signup
 
